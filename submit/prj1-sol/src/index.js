@@ -1,12 +1,12 @@
 import './style.css';
 
-import $ from 'jquery';        //make jquery() available as $
-import Meta from './meta.js';  //bundle the input to this program
+import $ from 'jquery'; //make jquery() available as $
+import Meta from './meta.js'; //bundle the input to this program
 
 //default values
-const DEFAULT_REF = '_';       //use this if no ref query param
-const N_UNI_SELECT = 4;        //switching threshold between radio & select
-const N_MULTI_SELECT = 4;      //switching threshold between checkbox & select
+const DEFAULT_REF = '_'; //use this if no ref query param
+const N_UNI_SELECT = 4; //switching threshold between radio & select
+const N_MULTI_SELECT = 4; //switching threshold between checkbox & select
 
 /*************************** Utility Routines **************************/
 
@@ -25,7 +25,7 @@ function makeRefUrl(ref) {
 }
 
 /** Return a jquery-wrapped element for tag and attr */
-function makeElement(tag, attr={}) {
+function makeElement(tag, attr = {}) {
   const $e = $(`<${tag}/>`);
   Object.entries(attr).forEach(([k, v]) => $e.attr(k, v));
   return $e;
@@ -38,11 +38,9 @@ function access(path) {
   const normalized = path.reduce((acc, p) => {
     if (p === '.') {
       return acc;
-    }
-    else if (p === '..') {
+    } else if (p === '..') {
       return acc.length === 0 ? acc : acc.slice(0, -1)
-    }
-    else {
+    } else {
       return acc.concat(p);
     }
   }, []);
@@ -50,7 +48,9 @@ function access(path) {
 }
 
 /** Return an id constructed from list path */
-function makeId(path) { return ('/' + path.join('/')); }
+function makeId(path) {
+  return ('/' + path.join('/'));
+}
 
 function getType(meta) {
   return meta.type || 'block';
@@ -63,7 +63,7 @@ function getType(meta) {
 function items(tag, meta, path, $element) {
   const $e = makeElement(tag, meta.attr);
   (meta.items || []).
-    forEach((item, i) => render(path.concat('items', i), $e));
+  forEach((item, i) => render(path.concat('items', i), $e));
   $element.append($e);
   return $e;
 }
@@ -73,7 +73,69 @@ function items(tag, meta, path, $element) {
 //@TODO
 
 /********************** Type Routine Common Handling *******************/
+function OptionItems(items) {
+  return items
+    .map(function (item, i) {
+      const element = makeElement('option', {
+        "value": item.key
+      }).text(item.text);
+      return element[0];
+    })
 
+   
+}
+
+function InputItems(items, type, attr) {
+  if (type === 'radio') {
+
+    const eachItem = [];
+    items.forEach(function (item, i) {
+
+      const inputElem = makeElement('input', {
+        "name": attr.name,
+        "value": item.key,
+        type: type
+      });
+      eachItem.push(inputElem[0]);
+
+      const labelElem = makeElement('label', {}).text(item.key);
+      eachItem.push(labelElem[0]);
+
+    })
+    return eachItem;
+
+  }
+  if(type === 'checkbox'){
+
+    const eachItem = [];
+    items.forEach(function (item, i) {
+
+      const inputElem = makeElement('input', {
+        "name": attr.name,
+        "value": item.key,
+        type: type
+      });
+      eachItem.push(inputElem[0]);
+
+      const labelElem = makeElement('label', {}).text(item.key);
+      eachItem.push(labelElem[0]);
+
+    })
+    return eachItem;
+
+
+
+
+
+
+
+
+
+
+  }
+  //radio = makeElement('radio', attr).text(meta.text);
+
+}
 //@TODO
 
 
@@ -83,11 +145,13 @@ function items(tag, meta, path, $element) {
 //void.  It will append the HTML corresponding to meta (which is
 //Meta[path]) to $element.
 
-function block(meta, path, $element) { items('div', meta, path, $element); }
+function block(meta, path, $element) {
+  items('div', meta, path, $element);
+}
 
 function form(meta, path, $element) {
   const $form = items('form', meta, path, $element);
-  $form.submit(function(event) {
+  $form.submit(function (event) {
     event.preventDefault();
     const $form = $(this);
     //@TODO
@@ -103,37 +167,155 @@ function header(meta, path, $element) {
 }
 
 function input(meta, path, $element) {
+  const text = (meta.required) ? meta.text + "*" : meta.text;
+  const id = meta.attr.id || makeId(path);
+  const attr = Object.assign({}, meta.attr, {
+    id: id
+  });
+  $element.append(makeElement('label', {
+    for: id
+  }).text(text));
+  const element = makeElement('div', {}).text('');
+  const $input = makeElement('input', attr).text(meta.text);
+  const $textarea = makeElement('textarea', attr).text(meta.text);
+  if (meta.subType === 'textarea')
+    element.append($textarea);
+  else
+    element.append($input);
+  const $errorDiv = makeElement('div', {
+    class: "error",
+    id: id
+  }).text('');
+  element.append($errorDiv);
+  $element.append(element)
   //@TODO
 }
 
 function link(meta, path, $element) {
   const parentType = getType(access(path.concat('..')));
-  const { text='', ref=DEFAULT_REF } = meta;
-  const attr = Object.assign({}, meta.attr||{}, { href: makeRefUrl(ref) });
+  const {
+    text = '', ref = DEFAULT_REF
+  } = meta;
+  const attr = Object.assign({}, meta.attr || {}, {
+    href: makeRefUrl(ref)
+  });
   $element.append(makeElement('a', attr).text(text));
 }
 
 function multiSelect(meta, path, $element) {
+  const text = (meta.required) ? meta.text + "*" : meta.text;
+  const id = meta.attr.id || makeId(path);
+  const attr = Object.assign({}, meta.attr, {
+    id: id
+  });
+  $element.append(makeElement('label', {
+    for: id
+  }).text(text));
+  const element = makeElement('div', {}).text('');
+
+
+  //debugger;
+  if (meta.items.length > (N_MULTI_SELECT || 4)) {
+    const $select = makeElement('select', {name: 'multiSelect', multiple: 'multiple'}).text('');
+    const $options = OptionItems(meta.items);
+    //debugger;
+    $select.append($options);
+    element.append($select)
+  } else {
+    meta.attr.id = makeId(path);
+    const radio = makeElement('radio', attr).text(meta.text);
+    const $radioButton = InputItems(meta.items, 'checkbox', attr);
+    const $fieldset = makeElement('div', {
+      class: "fieldset",
+      id: id
+    }).text('');
+    //radio.append($radioButton);
+    $fieldset.append($radioButton);
+    element.append($fieldset);
+  }
+
+  const $errorDiv = makeElement('div', {
+    class: "error",
+    id: id
+  }).text('');
+  element.append($errorDiv);
+  $element.append(element);
+
+
+
+
+
+
   //@TODO
 }
 
-function para(meta, path, $element) { items('p', meta, path, $element); }
+function para(meta, path, $element) {
+  items('p', meta, path, $element);
+}
 
 function segment(meta, path, $element) {
   if (meta.text !== undefined) {
     $element.append(makeElement('span', meta.attr).text(meta.text));
-  }
-  else {
+  } else {
     items('span', meta, path, $element);
   }
 }
 
 
 function submit(meta, path, $element) {
+  const $e = makeElement('div', meta.attr);
+  //$e.text(meta.text || '');
+  $element.append($e);
+  const attr = Object.assign({}, meta.attr, {
+    type: 'uniSelect'
+  });
+  const button = makeElement('button', attr).text(meta.text || '');
+  $element.append(button);
   //@TODO
 }
 
+
+
+
 function uniSelect(meta, path, $element) {
+  const text = (meta.required) ? meta.text + "*" : meta.text;
+  const id = meta.attr.id || makeId(path);
+  const attr = Object.assign({}, meta.attr, {
+    id: id
+  });
+  $element.append(makeElement('label', {
+    for: id
+  }).text(text));
+  const element = makeElement('div', {}).text('');
+
+
+  //debugger;
+  if (meta.items.length > (N_UNI_SELECT || 4)) {
+    const $select = makeElement('select', {}).text('');
+    const $options = OptionItems(meta.items);
+    //debugger;
+    $select.append($options);
+    element.append($select)
+  } else {
+    meta.attr.id = makeId(path);
+    const radio = makeElement('radio', attr).text(meta.text);
+    const $radioButton = InputItems(meta.items, 'radio', attr);
+    const $fieldset = makeElement('div', {
+      class: "fieldset",
+      id: id
+    }).text('');
+    //radio.append($radioButton);
+    $fieldset.append($radioButton);
+    element.append($fieldset);
+  }
+
+  const $errorDiv = makeElement('div', {
+    class: "error",
+    id: id
+  }).text('');
+  element.append($errorDiv);
+  $element.append(element);
+
   //@TODO
 }
 
@@ -154,18 +336,16 @@ const FNS = {
 
 /*************************** Top-Level Code ****************************/
 
-function render(path, $element=$('body')) {
+function render(path, $element = $('body')) {
   const meta = access(path);
   if (!meta) {
     $element.append(`<p>Path ${makeId(path)} not found</p>`);
-  }
-  else {
+  } else {
     const type = getType(meta);
     const fn = FNS[type];
     if (fn) {
       fn(meta, path, $element);
-    }
-    else {
+    } else {
       $element.append(`<p>type ${type} not supported</p>`);
     }
   }
@@ -173,7 +353,7 @@ function render(path, $element=$('body')) {
 
 function go() {
   const ref = getRef() || DEFAULT_REF;
-  render([ ref ]);
+  render([ref]);
 }
 
 go();
