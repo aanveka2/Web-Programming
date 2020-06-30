@@ -82,7 +82,7 @@ function OptionItems(items) {
       return element[0];
     })
 
-   
+
 }
 
 function InputItems(items, type, attr) {
@@ -105,7 +105,7 @@ function InputItems(items, type, attr) {
     return eachItem;
 
   }
-  if(type === 'checkbox'){
+  if (type === 'checkbox') {
 
     const eachItem = [];
     items.forEach(function (item, i) {
@@ -154,9 +154,30 @@ function form(meta, path, $element) {
   $form.submit(function (event) {
     event.preventDefault();
     const $form = $(this);
+
     //@TODO
-    // const results = ...;
-    // console.log(JSON.stringify(results, null, 2));
+
+    // const results = {};
+    // $form.serializeArray().forEach((cur)=>{
+    //   results[cur['name']]= cur['value'];
+    // })
+    //console.log(JSON.stringify($form.serializeArray(), null, 2));
+    const results = $form.serializeArray().reduce((acc, cur) => {
+
+
+      if (cur['name'] === 'multiSelect' || cur['name'] === 'primaryColors') {
+        debugger
+        if (!Array.isArray(acc[cur['name']])) {
+          acc[cur['name']] = [];
+        }
+        acc[cur['name']].push(cur['value'])
+      } else {
+        acc[cur['name']] = cur['value'];
+      }
+      return acc;
+    }, {})
+
+    console.log(JSON.stringify(results, null, 2));
   });
 }
 
@@ -216,7 +237,10 @@ function multiSelect(meta, path, $element) {
 
   //debugger;
   if (meta.items.length > (N_MULTI_SELECT || 4)) {
-    const $select = makeElement('select', {name: 'multiSelect', multiple: 'multiple'}).text('');
+    const $select = makeElement('select', {
+      name: 'multiSelect',
+      multiple: 'multiple'
+    }).text('');
     const $options = OptionItems(meta.items);
     //debugger;
     $select.append($options);
@@ -267,9 +291,9 @@ function submit(meta, path, $element) {
   //$e.text(meta.text || '');
   $element.append($e);
   const attr = Object.assign({}, meta.attr, {
-    type: 'uniSelect'
+    type: 'submit'
   });
-  const button = makeElement('button', attr).text(meta.text || '');
+  const button = makeElement('button', attr).text(meta.text || 'Submit');
   $element.append(button);
   //@TODO
 }

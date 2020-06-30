@@ -284,7 +284,7 @@ export default {
 	    required: true,
 	    items: [ { key: 'red', }, { key: 'blue', }, { key: 'green' }, ],
 	  },
-	  { type: 'submit' },
+	  { type: 'submit'  },
 	],
       },
     ],
