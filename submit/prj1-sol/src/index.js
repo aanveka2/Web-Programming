@@ -2,6 +2,7 @@ import './style.css';
 
 import $ from 'jquery'; //make jquery() available as $
 import Meta from './meta.js'; //bundle the input to this program
+import meta from './meta.js';
 
 //default values
 const DEFAULT_REF = '_'; //use this if no ref query param
@@ -115,6 +116,7 @@ function InputItems(items, type, attr) {
         "value": item.key,
         type: type
       });
+
       eachItem.push(inputElem[0]);
 
       const labelElem = makeElement('label', {}).text(item.key);
@@ -162,11 +164,24 @@ function form(meta, path, $element) {
     //   results[cur['name']]= cur['value'];
     // })
     //console.log(JSON.stringify($form.serializeArray(), null, 2));
+
+    // $('.submit').click(function() {
+    //   checked = $("input[type=checkbox]:checked").length;
+    //   if (!checked) {
+    //     $errorDiv.text("The field "+ meta.text + " must be specified." )
+    //     $errorDiv.addClass("error");
+    //   } else {
+    //     $errorDiv.text("")
+    //     $errorDiv.removeClass("error");
+    //   }
+    // });
+
+
     const results = $form.serializeArray().reduce((acc, cur) => {
 
 
       if (cur['name'] === 'multiSelect' || cur['name'] === 'primaryColors') {
-        debugger
+        //debugger
         if (!Array.isArray(acc[cur['name']])) {
           acc[cur['name']] = [];
         }
@@ -198,6 +213,7 @@ function input(meta, path, $element) {
   }).text(text));
   const element = makeElement('div', {}).text('');
   const $input = makeElement('input', attr).text(meta.text);
+  //const $inputChecked = makeElement('input:checked', attr).text(meta.text);
   const $textarea = makeElement('textarea', attr).text(meta.text);
   if (meta.subType === 'textarea')
     element.append($textarea);
@@ -205,8 +221,75 @@ function input(meta, path, $element) {
     element.append($input);
   const $errorDiv = makeElement('div', {
     class: "error",
-    id: id
+    id: id + "-err"
   }).text('');
+
+  $input.on('blur', (event) => {
+    //debugger
+    if (meta.required && (
+        (meta.chkFn != undefined && meta.chkFn(event.target.value.trim()) == null)) ||
+      meta.chkFn == undefined && event.target.value.trim() === ""
+    ) {
+      let errorMsg = (meta.errMsgFn != undefined) ? "The field " + meta.text + " must be specified." : "";
+      $errorDiv.text(errorMsg)
+      $errorDiv.addClass("error");
+    } else {
+      $errorDiv.text("")
+      $errorDiv.removeClass("error");
+    }
+
+  });
+
+
+
+  $input.change((event) => {
+    //debugger
+    if (meta.required && (
+        (meta.chkFn != undefined && meta.chkFn(event.target.value.trim())) === null) ||
+      meta.chkFn == undefined && event.target.value.trim() === ""
+    ) {
+      let errorMsg = (meta.errMsgFn != undefined) ? meta.errMsgFn(event.target.value, meta) : "";
+      $errorDiv.text(errorMsg)
+      $errorDiv.addClass("error");
+    } else {
+      $errorDiv.text("")
+      $errorDiv.removeClass("error");
+    }
+
+  });
+  // const radio = makeElement('radio', attr).text(meta.text);
+  // radio.click(function(){
+  //   alert("Here");
+  //   debugger
+  //   checked = $(`input[name="${name}"]:checked`).length;
+  //   if (!checked) {
+  //     // $errorDiv.text("The field "+ meta.text + " must be specified." )
+  //     // $errorDiv.addClass("error");
+  //   } else {
+  //     // $errorDiv.text("")
+  //     // $errorDiv.removeClass("error");
+  //   }
+
+  // });
+
+  // $inputChecked.on('blur', (event)=>{
+  //   debugger
+  //   if (event.target.value != undefined && event.target.value.length <= 0) {
+  //     $errorDiv.text("The field "+ meta.text + " must be specified." )
+  //     $errorDiv.addClass("error");
+  //   } else {
+  //     $errorDiv.text("")
+  //     $errorDiv.removeClass("error");
+  //   }
+
+  // });
+
+
+
+
+
+
+
   element.append($errorDiv);
   $element.append(element)
   //@TODO
@@ -234,6 +317,10 @@ function multiSelect(meta, path, $element) {
   }).text(text));
   const element = makeElement('div', {}).text('');
 
+  const $errorDiv = makeElement('div', {
+    class: "error",
+    id: id + "-err"
+  }).text('');
 
   //debugger;
   if (meta.items.length > (N_MULTI_SELECT || 4)) {
@@ -247,21 +334,35 @@ function multiSelect(meta, path, $element) {
     element.append($select)
   } else {
     meta.attr.id = makeId(path);
-    const radio = makeElement('radio', attr).text(meta.text);
+    // const radio = makeElement('radio', attr).text(meta.text);
     const $radioButton = InputItems(meta.items, 'checkbox', attr);
     const $fieldset = makeElement('div', {
       class: "fieldset",
       id: id
     }).text('');
-    //radio.append($radioButton);
+
+
+    Array.from($radioButton).filter(data => data.type === "checkbox")
+      .forEach(function (data) {
+        console.log(meta);
+        $(data).on('click', (event) => {
+          debugger
+          if (!Array.from(document.getElementsByName(attr.name)).map(data => data.checked).reduce((acc, curr) => (curr || acc))) {
+            $errorDiv.text("The field " + meta.text + " must be specified.")
+            $errorDiv.addClass("error")
+          } else {
+            $errorDiv.text("")
+            $errorDiv.removeClass("error")
+          }
+        })
+      })
+
     $fieldset.append($radioButton);
     element.append($fieldset);
   }
 
-  const $errorDiv = makeElement('div', {
-    class: "error",
-    id: id
-  }).text('');
+
+
   element.append($errorDiv);
   $element.append(element);
 
@@ -381,3 +482,13 @@ function go() {
 }
 
 go();
+
+
+
+
+// function jq( myid ) {
+//  return "#" + a.split("/").join("\\\\/");
+// }
+
+// $("#\\/contact\\/items\\/1\\/items\\/0" )
+//   .on('blur', () => {alert("sadna padna")})
