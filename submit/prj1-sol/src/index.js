@@ -135,7 +135,7 @@ function InputItems(items, type, attr) {
 
 
   }
-  //radio = makeElement('radio', attr).text(meta.text);
+  
 
 }
 //@TODO
@@ -157,27 +157,11 @@ function form(meta, path, $element) {
     event.preventDefault();
     const $form = $(this);
 
-    //@TODO
-
-    // const results = {};
-    // $form.serializeArray().forEach((cur)=>{
-    //   results[cur['name']]= cur['value'];
-    // })
-    //console.log(JSON.stringify($form.serializeArray(), null, 2));
-
-    // $('.submit').click(function() {
-    //   checked = $("input[type=checkbox]:checked").length;
-    //   if (!checked) {
-    //     $errorDiv.text("The field "+ meta.text + " must be specified." )
-    //     $errorDiv.addClass("error");
-    //   } else {
-    //     $errorDiv.text("")
-    //     $errorDiv.removeClass("error");
-    //   }
-    // });
-
-
-    const results = $form.serializeArray().reduce((acc, cur) => {
+     $('input,select,textarea', $form).trigger('blur');
+     $('input,select', $form).trigger('change');
+  
+   
+      const results = $form.serializeArray().reduce((acc, cur) => {
 
 
       if (cur['name'] === 'multiSelect' || cur['name'] === 'primaryColors') {
@@ -224,13 +208,14 @@ function input(meta, path, $element) {
     id: id + "-err"
   }).text('');
 
+   //validation for input text on blur event
   $input.on('blur', (event) => {
     //debugger
-    if (meta.required && (
-        (meta.chkFn != undefined && meta.chkFn(event.target.value.trim()) == null)) ||
-      meta.chkFn == undefined && event.target.value.trim() === ""
+    if ( Boolean(meta.required) && (
+        (meta.chkFn != undefined && meta.chkFn(event.target.value.trim()) == null)||
+      meta.chkFn == undefined && event.target.value.trim() === "")
     ) {
-      let errorMsg = (meta.errMsgFn != undefined) ? "The field " + meta.text + " must be specified." : "";
+      let errorMsg = (meta.errMsgFn == undefined || event.target.value.trim() === "") ? "The field " + meta.text + " must be specified." :  meta.errMsgFn(event.target.value, meta);
       $errorDiv.text(errorMsg)
       $errorDiv.addClass("error");
     } else {
@@ -241,14 +226,15 @@ function input(meta, path, $element) {
   });
 
 
-
+  //validation for input text on chnage event
   $input.change((event) => {
     //debugger
-    if (meta.required && (
-        (meta.chkFn != undefined && meta.chkFn(event.target.value.trim())) === null) ||
-      meta.chkFn == undefined && event.target.value.trim() === ""
+    if ( Boolean(meta.required) && (
+        (meta.chkFn != undefined && meta.chkFn(event.target.value.trim())) === null ||
+      meta.chkFn == undefined && event.target.value.trim() === "")
     ) {
-      let errorMsg = (meta.errMsgFn != undefined) ? meta.errMsgFn(event.target.value, meta) : "";
+      let errorMsg = (meta.errMsgFn == undefined || event.target.value.trim() === "") ? "The field " + meta.text + " must be specified." :  meta.errMsgFn(event.target.value, meta);
+
       $errorDiv.text(errorMsg)
       $errorDiv.addClass("error");
     } else {
@@ -257,42 +243,9 @@ function input(meta, path, $element) {
     }
 
   });
-  // const radio = makeElement('radio', attr).text(meta.text);
-  // radio.click(function(){
-  //   alert("Here");
-  //   debugger
-  //   checked = $(`input[name="${name}"]:checked`).length;
-  //   if (!checked) {
-  //     // $errorDiv.text("The field "+ meta.text + " must be specified." )
-  //     // $errorDiv.addClass("error");
-  //   } else {
-  //     // $errorDiv.text("")
-  //     // $errorDiv.removeClass("error");
-  //   }
-
-  // });
-
-  // $inputChecked.on('blur', (event)=>{
-  //   debugger
-  //   if (event.target.value != undefined && event.target.value.length <= 0) {
-  //     $errorDiv.text("The field "+ meta.text + " must be specified." )
-  //     $errorDiv.addClass("error");
-  //   } else {
-  //     $errorDiv.text("")
-  //     $errorDiv.removeClass("error");
-  //   }
-
-  // });
-
-
-
-
-
-
-
+  
   element.append($errorDiv);
   $element.append(element)
-  //@TODO
 }
 
 function link(meta, path, $element) {
@@ -334,7 +287,6 @@ function multiSelect(meta, path, $element) {
     element.append($select)
   } else {
     meta.attr.id = makeId(path);
-    // const radio = makeElement('radio', attr).text(meta.text);
     const $radioButton = InputItems(meta.items, 'checkbox', attr);
     const $fieldset = makeElement('div', {
       class: "fieldset",
@@ -371,7 +323,6 @@ function multiSelect(meta, path, $element) {
 
 
 
-  //@TODO
 }
 
 function para(meta, path, $element) {
@@ -395,8 +346,19 @@ function submit(meta, path, $element) {
     type: 'submit'
   });
   const button = makeElement('button', attr).text(meta.text || 'Submit');
+
+  // button.on('submit', event => {
+
+  //    $('input,select,textarea', $form).trigger('blur');
+  //   $('input,select', $form).trigger('change');
+  // }
+  // )
+
+
   $element.append(button);
-  //@TODO
+
+
+
 }
 
 
@@ -418,6 +380,45 @@ function uniSelect(meta, path, $element) {
   if (meta.items.length > (N_UNI_SELECT || 4)) {
     const $select = makeElement('select', {}).text('');
     const $options = OptionItems(meta.items);
+
+    //validation for dropdown box
+    $select.on('blur', (event) => {
+      //debugger
+      if ( Boolean(meta.required) && (
+          (meta.chkFn != undefined && meta.chkFn(event.target.value.trim()) == null)||
+        meta.chkFn == undefined && event.target.value.trim() === "")
+      ) {
+        let errorMsg = (meta.errMsgFn == undefined || event.target.value.trim() === "") ? "The field " + meta.text + " must be specified." :  meta.errMsgFn(event.target.value, meta);
+        $errorDiv.text(errorMsg)
+        $errorDiv.addClass("error");
+      } else {
+        $errorDiv.text("")
+        $errorDiv.removeClass("error");
+      }
+  
+    });
+
+    //validation for dropdown box
+    $select.change((event) => {
+      //debugger
+      if ( Boolean(meta.required) && (
+          (meta.chkFn != undefined && meta.chkFn(event.target.value.trim())) === null ||
+        meta.chkFn == undefined && event.target.value.trim() === "")
+      ) {
+        let errorMsg = (meta.errMsgFn == undefined || event.target.value.trim() === "") ? "The field " + meta.text + " must be specified." :  meta.errMsgFn(event.target.value, meta);
+  
+        $errorDiv.text(errorMsg)
+        $errorDiv.addClass("error");
+      } else {
+        $errorDiv.text("")
+        $errorDiv.removeClass("error");
+      }
+  
+    });
+
+
+
+
     //debugger;
     $select.append($options);
     element.append($select)
@@ -441,7 +442,7 @@ function uniSelect(meta, path, $element) {
   element.append($errorDiv);
   $element.append(element);
 
-  //@TODO
+ 
 }
 
 
@@ -485,10 +486,3 @@ go();
 
 
 
-
-// function jq( myid ) {
-//  return "#" + a.split("/").join("\\\\/");
-// }
-
-// $("#\\/contact\\/items\\/1\\/items\\/0" )
-//   .on('blur', () => {alert("sadna padna")})
