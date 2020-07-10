@@ -61,7 +61,7 @@ export default class Model {
   /** Set up properties from props as properties of this. */
   constructor(props) {
     Object.assign(this, props);
-  }
+   }
 
   /** Return a new instance of Model set up to use database specified
    *  by dbUrl
@@ -70,10 +70,22 @@ export default class Model {
     let client;
     try {
       //@TODO
+      
+      client = await new mongo.MongoClient.connect(dbUrl);
+      const db = client.db("books");
+      const cartCollections = db.collection("cartOpertaion");
+      const bookCollections = db.collection("bookOpertaion");
+      //console.log(bookCollections)
+
       const props = {
-	validator: new Validator(META),
-	//@TODO other properties
+	    validator: new Validator(META),
+     //@TODO other properties
+      client: client,
+      db: db,
+      bookCollections : bookCollections,
+      cartCollections :cartCollections
       };
+      //console.log(props)
       const model = new Model(props);
       return model;
     }
@@ -88,11 +100,13 @@ export default class Model {
    */
   async close() {
     //@TODO
+    await this.client.close();
   }
 
   /** Clear out all data stored within this model. */
   async clear() {
     //@TODO
+    await this.db.dropDatabase();
   }
   
   //Action routines
@@ -107,8 +121,20 @@ export default class Model {
   async newCart(rawNameValues) {
     const nameValues = this._validate('newCart', rawNameValues);
     //@TODO
-    return '@TODO';
+    const id = String(Math.random()).slice(2, 7);
+    const xObj = rawNameValues.id === undefined ? Object.assign({}, rawNameValues, {id}) : rawNameValues;
+    //console.log(id);
+    try {
+      await this.cartCollections.insertOne(xObj);
+    }catch (err) {
+      console.log(err);
+      const msg = `The id ${id} of the object  already exists`;
+      throw [ new ModelError('ID EXIST', msg) ];
+    }
+    return id;
+    //console.log(id);
   }
+
 
   /** Given fields { cartId, sku, nUnits } = rawNameValues, update
    *  number of units for sku to nUnits.  Update `_lastModified` field
@@ -121,6 +147,16 @@ export default class Model {
   async cartItem(rawNameValues) {
     const nameValues = this._validate('cartItem', rawNameValues);
     //@TODO
+    
+    const ret = await collection.updateOne({ _id: dbUpdate._id }, { $set: set });
+
+
+
+
+
+
+
+
   }
   
   /** Given fields { cartId } = nameValues, return cart identified by
@@ -154,6 +190,7 @@ export default class Model {
   async addBook(rawNameValues) {
     const nameValues = this._validate('addBook', rawNameValues);
     //@TODO
+    const collections = db.collection("bookOperation");
   }
 
   /** Given fields { isbn, authorsTitle, _count=COUNT, _index=0 } =
@@ -206,3 +243,4 @@ const MONGO_CONNECT_OPTIONS = { useUnifiedTopology: true };
 const COUNT = 5;
 
 //define private constants and functions here.
+
