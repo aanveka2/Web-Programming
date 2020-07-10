@@ -123,7 +123,7 @@ export default class Model {
     //@TODO
     const id = String(Math.random()).slice(2, 7);
     const xObj = rawNameValues.id === undefined ? Object.assign({}, rawNameValues, {id}) : rawNameValues;
-    //console.log(id);
+    console.log(xObj);
     try {
       await this.cartCollections.insertOne(xObj);
     }catch (err) {
@@ -131,8 +131,9 @@ export default class Model {
       const msg = `The id ${id} of the object  already exists`;
       throw [ new ModelError('ID EXIST', msg) ];
     }
+    console.log(await this.cartCollections.find({}).toArray());
     return id;
-    //console.log(id);
+    
   }
 
 
@@ -148,16 +149,30 @@ export default class Model {
     const nameValues = this._validate('cartItem', rawNameValues);
     //@TODO
     
-    const ret = await collection.updateOne({ _id: dbUpdate._id }, { $set: set });
+    const cartId = rawNameValues.cartId;
+    //console.log(cartId);
+    const sku = nameValues.sku;
+    const nUnits = nameValues.nUnits;
+   
 
+     const ret = await this.cartCollections.updateOne({"id":nameValues.cartId}, {$set : {[nameValues.sku] : nameValues.nUnits}, $currentDate: {lastModified: true}} );
+     //console.log(ret);
+     if (ret.matchedCount !== 1) {
+      const msg = `no ${nameValues} for id ${cartId} in update`;
+      throw [ new ModelError('BAD_ID', msg) ];
+    
 
-
-
-
-
-
-
+    }
+    console.log(await this.cartCollections.find({}).toArray());
+   
   }
+  
+
+
+
+
+
+  
   
   /** Given fields { cartId } = nameValues, return cart identified by
    *  cartId.  The cart is returned as an object which contains a
@@ -173,7 +188,7 @@ export default class Model {
   async getCart(rawNameValues) {
     const nameValues = this._validate('getCart', rawNameValues);
     //@TODO
-    return {};
+    return '@TODO';
   }
 
   /** Given fields { isbn, title, authors, publisher, year, pages } =
@@ -190,7 +205,7 @@ export default class Model {
   async addBook(rawNameValues) {
     const nameValues = this._validate('addBook', rawNameValues);
     //@TODO
-    const collections = db.collection("bookOperation");
+   
   }
 
   /** Given fields { isbn, authorsTitle, _count=COUNT, _index=0 } =
