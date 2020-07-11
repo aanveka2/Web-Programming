@@ -1,22 +1,24 @@
 # i544-
 
-# Project 1
+# Project 2
 ## Name: Akshay Kumar Anvekar
-### aanveka2@binghamto.edu (B00813848)
+### aanveka2@binghamton.edu (B00813848)
 
 
 ## Description:
 
-1. Added the code for  submit type,  input type,  uniSelect type and multiSelect type.
-2. Add code to implement the required dynamic behavior and validate individual widgets on blur events (for type input) or change events (for uniSelect and multiSelect type's).
-3. Added the validations using submit handler for an error-free form.
+1. Perfromed the CRUD Operation using the  mongodb documents correspond to arbitrarily nested JavaScript Objects
 
-**The Final Submission of Project 1 is on 3rd July 2020. (Utilised  1 slack day) **
+2. Added the code for new_cart() , cartItem() , getCart(), addBook() and findBooks().
+3  All asynchronous mongo library functions were called directly using await.
+
+
+**The Final Submission of Project 2 is on 11th July 2020.**
 
 
 5. External materials: 
-https://developer.mozilla.org/en-US/
+https://mongodb.github.io/node-mongodb-native/3.6/api/Collection.html#find
+https://mongodb.github.io/node-mongodb-native/3.6/api/Cursor.html#skip
+https://mongodb.github.io/node-mongodb-native/3.6/api/Collection.html#findOne
 
-
-
-Date 3rd July 2020
+**Date 11 July 2020**
