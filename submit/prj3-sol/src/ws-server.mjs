@@ -37,8 +37,13 @@ function setupRoutes(app) {
 
   //application routes
   app.get(`/${BASE}`, doBase(app));
+  
   //@TODO: add other application routes
-
+  app.post(`/${BASE}/carts`, doCreate(app));
+  app.patch(`/${BASE}/carts/:id`, doUpdate(app));
+  console.log(`/${BASE}/carts/:id`);
+  app.get(`/${BASE}/books/:id`, doGet(app));
+  console.log(`/${BASE}/books/:id`);
   //must be last
   app.use(do404(app));
   app.use(doErrors(app));
@@ -67,7 +72,9 @@ function doBase(app) {
     try {
       const links = [
 	{ rel: 'self', name: 'self', href: req.selfUrl, },
-	//@TODO add links for book and cart collections
+  //@TODO add links for book and cart collections
+    { rel: 'collection', name: 'books', href: req.selfUrl+"/books", },
+    { rel: 'collection', name: 'carts', href: req.selfUrl+"/carts", }
       ];
       res.json({ links });
     }
@@ -79,6 +86,96 @@ function doBase(app) {
 }
 
 //@TODO: Add handlers for other application routes
+function doCreate(app) {
+  return errorWrap(async function (req, res) {
+    try {
+      //console.log(app);
+      const obj = req.body;
+      const results = await app.locals.model.newCart(obj);
+      const location = req.selfUrl + '/'+ obj.id;
+      res.append('Location', location);
+      res.status(CREATED); res.json({});
+    }
+    catch (err) {
+      const mapped = mapError(err);
+      res.status(mapped.status).json(mapped);
+    }
+  });
+}
+
+function doUpdate(app) {
+  return errorWrap(async function (req, res) {
+    try {
+      
+      
+      const cartId = req.params.id;
+      const patch = Object.assign({},req.body,{cartId: cartId});
+      
+      //const id = req.params.id;
+      //const obj = req.body;
+      //const patch = Object.assign({}, obj, {id});
+      const results = await app.locals.model.cartItem(patch);
+      res.status(OK);
+      res.json({});
+    }
+    catch (err) {
+      const mapped = mapError(err);
+      res.status(mapped.status).json(mapped);
+    }
+  });
+}
+
+function doGet(app) {
+  return errorWrap(async function (req, res) {
+    //console.log("in get method");
+    try {
+      
+      const id = req.params.id;
+      //console.log(id);
+      const results = await app.locals.model.findBooks({isbn: id} );
+      //console.log(results);
+      const links = [{ rel: 'self', name : "self", href: req.selfUrl } ];
+      if(results.length === 0){
+        throw {
+          isDomainError: true,
+          code : 'NOT FOUND',
+          message: `user ${id} not found`,
+
+        };
+
+      }
+      else {
+        const merge = Object.assign({},{links}, {results});
+        res.json(merge);
+      }
+    }
+    catch (err) {
+      const mapped = mapError(err);
+      res.status(mapped.status).json(mapped);
+    }
+  });
+}
+
+function doList(app, category) {
+  return errorWrap(async function (req, res) {
+    try {
+      const q = req.query || {};
+      const q1 = Object.assign({}, q, {_count: (+q._count || 1)});
+
+function errorWrap(handler) {
+  return async (req, res, next) => {
+    try {
+      await handler(req, res, next);
+    }
+    catch (err) {
+      next(err);
+    }
+  };
+}
+
+
+
+
 
 /** Default handler for when there is no route for a particular method
  *  and path.
