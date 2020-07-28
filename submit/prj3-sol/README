@@ -1,6 +1,24 @@
-Name:		Akshay Kumar Anvekar
-B-Number:	B00813848
-Email:		aanveka2@binghamton.edu
+# i544-
 
-Add text here as needed.
+# Project 3
+## Name: Akshay Kumar Anvekar
+### aanveka2@binghamton.edu (B00813848)
+
+
+## Description:
+
+1. Perfromed the GET POST PATCH Operation using the  express js routing  documents correspond to arbitrarily nested JavaScript Objects
+
+2. Added the code for doBase() , doCreate() , doUpdate(), doGet() and doGetCart() doGetBooks()
+3  All asynchronous express js  library functions were called directly using await.
+
+
+**The Final Submission of Project 3 is on 27th July 2020.Making use of 3 slack days**
+
+
+5. External materials: 
+https://expressjs.com/en/guide/routing.html
+https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
+
+**Date 27 July 2020**
 
