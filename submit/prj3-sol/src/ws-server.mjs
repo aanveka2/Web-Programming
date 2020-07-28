@@ -41,9 +41,9 @@ function setupRoutes(app) {
   //@TODO: add other application routes
   app.post(`/${BASE}/carts`, doCreate(app));
   app.patch(`/${BASE}/carts/:id`, doUpdate(app));
-  console.log(`/${BASE}/carts/:id`);
   app.get(`/${BASE}/books/:id`, doGet(app));
-  console.log(`/${BASE}/books/:id`);
+  app.get(`/${BASE}/carts/:id`, doGetCart(app));
+  app.get(`/${BASE}/books`, doGetBooks(app));
   //must be last
   app.use(do404(app));
   app.use(doErrors(app));
@@ -92,7 +92,7 @@ function doCreate(app) {
       //console.log(app);
       const obj = req.body;
       const results = await app.locals.model.newCart(obj);
-      const location = req.selfUrl + '/'+ obj.id;
+      const location = req.selfUrl + '/'+ results;
       res.append('Location', location);
       res.status(CREATED); res.json({});
     }
@@ -105,17 +105,11 @@ function doCreate(app) {
 
 function doUpdate(app) {
   return errorWrap(async function (req, res) {
-    try {
-      
-      
+    try {          
       const cartId = req.params.id;
       const patch = Object.assign({},req.body,{cartId: cartId});
-      
-      //const id = req.params.id;
-      //const obj = req.body;
-      //const patch = Object.assign({}, obj, {id});
       const results = await app.locals.model.cartItem(patch);
-      res.status(OK);
+      res.status(204);
       res.json({});
     }
     catch (err) {
@@ -127,7 +121,6 @@ function doUpdate(app) {
 
 function doGet(app) {
   return errorWrap(async function (req, res) {
-    //console.log("in get method");
     try {
       
       const id = req.params.id;
@@ -136,31 +129,94 @@ function doGet(app) {
       //console.log(results);
       const links = [{ rel: 'self', name : "self", href: req.selfUrl } ];
       if(results.length === 0){
-        throw {
-          isDomainError: true,
-          code : 'NOT FOUND',
-          message: `user ${id} not found`,
-
-        };
-
+          throw [ new ModelError('BAD_ID', `no book for isbn ${id}`, 'isbn'), ];
+        // await do404(app);
       }
       else {
         const merge = Object.assign({},{links}, {results});
         res.json(merge);
       }
     }
-    catch (err) {
+    catch (err) {         
       const mapped = mapError(err);
       res.status(mapped.status).json(mapped);
     }
   });
 }
 
-function doList(app, category) {
-  return errorWrap(async function (req, res) {
+function doGetCart(app){
+  return async function(req, res) {
     try {
-      const q = req.query || {};
-      const q1 = Object.assign({}, q, {_count: (+q._count || 1)});
+      const cartId = req.params.id;
+      const results = await app.locals.model.getCart({ cartId: cartId });
+      const obj = {};
+      if (results.length === 0) {
+        throw [ new ModelError('BAD_ID', `no cart for id ${cartId}`, 'isbn'), ];
+      }
+      else {        
+        obj._lastModified = results._lastModified;
+        delete results._lastModified;
+        obj.links = [ { rel: "self", name: "self", href: req.selfUrl, },];
+        const items = [];
+        for (const [key, value] of Object.entries(results)) {
+          items.push({ links : [{ rel: 'item', name: 'book', href: req.baseUrl + `/books/${key}`, }],
+            nUnits : value,
+            sku : key
+          })
+        }
+        obj.result = items;
+        res.json(obj);
+      }
+    }
+    catch(err) {
+      const mapped = mapError(err);
+      res.status(mapped.status).json(mapped);
+    }
+  };
+}
+
+
+function doGetBooks(app) {
+  return async function(req, res){
+    try {
+      const query = req.query || {};
+      const params = Object.assign({}, query, {_count: (+query._count || 5)+1});
+      const count = Number(query._count || 5);
+      const index = Number(query._index || 0);
+      if(!query){
+        throw [ new ModelError('FORM_ERROR', `At least one search field must be specified.`, ''), ];
+      }
+      const results = await app.locals.model.findBooks(params);
+      const resCount = results.slice(0, params._count - 1);
+      resCount.map(item => {item.links = [{rel: "details",name: "book",href: req.baseUrl + `/books/${item.isbn}`
+          }
+        ];
+      });
+      const data = {links : [{ rel: 'self', name: 'self', href: req.selfUrl }],
+        result: resCount
+      };
+      if (index > 0) {
+        let prevIndex = index - count;
+        if (prevIndex < 0){
+          prevIndex = 0;
+        }
+        const prevUrl = `${req.baseUrl}/books?${querystring.stringify(Object.assign({}, query, { _index: prevIndex }))}`;
+        data.links.push({ rel: 'prev', href: prevUrl, name: 'prev' });
+      }      
+      const nextIndex = index + count;
+      if (results.length === params._count) {
+        const nextUrl = `${req.baseUrl}/books?${querystring.stringify(Object.assign({}, query, {_index: nextIndex }))}`;
+        data.links.push({rel: 'next', href: nextUrl, name: 'next'});
+      }
+      res.json(data);
+    }
+    catch (err) {
+      const mapped = mapError(err);
+      res.status(mapped.status).json(mapped);
+    }
+  }
+}
+
 
 function errorWrap(handler) {
   return async (req, res, next) => {
@@ -234,6 +290,3 @@ function mapError(err) {
 } 
 
 /****************************** Utilities ******************************/
-
-
-
