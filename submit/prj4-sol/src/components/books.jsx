@@ -7,13 +7,24 @@ export default class Books extends React.Component {
   constructor(props) {
     super(props);
     //@TODO other initialization
+    const extraInfos = {
+      submit: {
+        type: 'submit',
+        value: 'Create',
+      },
+      
+    }
+    
   }
 
   //@TODO other methods
 
   render() {
     //@TODO complete rendering
-    return '';
+    return <form className="search">
+      <label htmlFor="search">Search Catalog</label>
+      <input name="authorsTitleSearch" id="search"/>
+    </form>;
   }
 
 }
