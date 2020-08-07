@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="../../assets/styles/article.css" rel="stylesheet" type="text/css" /> 
+    <title>CS 544: Project 4</title>
+    <link href="prj4/hl-fine_blue.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <nav>
+      <ul>
+	<li><a href="../../index.html" class="material-icons">house</a></li>
+	<li><a href="../../docs/index.html">Docs</a></li>
+	<li><a href="../../exercises/index.html">Exercises</a></li>
+	<li><a href="../../hws/index.html">Homeworks</a></li>
+	<li><a href="../../misc/index.html">Misc</a></li>
+	<li><a href="../../projects/index.html">Projects</a></li>
+	<li><a href="../../slides/index.html">Slides</a></li>
+	<li><a id="loginAction"></a></li>
+      </ul>
+    </nav>
+    <div class="content">
+      <section data-coord="prj4.umt:1:0"><h1 data-coord="prj4.umt:1:0">Project 4</h1><p data-coord="prj4.umt:3:0"><strong data-coord="prj4.umt:3:0">Due</strong>: Aug 6 by 11:59p <br data-coord="prj4.umt:3:23"/>
+<strong data-coord="prj4.umt:3:26">No Late Submissions</strong>
+</p><p data-coord="prj4.umt:6:0"><strong data-coord="prj4.umt:6:0">Important Reminder</strong>: As per the course <em data-coord="prj4.umt:6:110"><a href="../../misc/academic-honesty-statement/academic-honesty-policy.html" data-coord="prj4.umt:6:110">Academic Honesty Statement</a></em>,
+cheating of any kind will minimally result in your letter grade
+for the entire course being reduced by one level.
+</p><p data-coord="prj4.umt:10:0">This document first describes the aims of this project followed by a
+brief overview.  It then lists the requirements as explicitly as
+possible.  This is followed by a log which should help you understand
+the requirements.  It describes the files with which you have been
+provided.  Finally, it provides some hints as to how the project
+requirements can be met.
+</p><p data-coord="prj4.umt:17:0">[Some links may not work from the PDF version of this document.  All links
+should work from the HTML version.]
+</p><section data-coord="prj4.umt:20:0"><h2 data-coord="prj4.umt:20:0">Aims</h2><p data-coord="prj4.umt:23:0">The aims of this project are as follows:
+</p><ul data-coord="prj4.umt:25:0"><li data-coord="prj4.umt:25:0"><p data-coord="prj4.umt:25:4">To expose you to reactjs.
+</p></li><li data-coord="prj4.umt:27:0"><p data-coord="prj4.umt:27:4">To make you implement a Single Page App.
+</p></li><li data-coord="prj4.umt:29:0"><p data-coord="prj4.umt:29:4">To use web services.
+</p></li></ul></section><section data-coord="prj4.umt:31:0"><h2 data-coord="prj4.umt:31:0">Overview</h2><p data-coord="prj4.umt:34:0">In this project, you will use the web services from your earlier
+<em data-coord="prj4.umt:34:86"><a href="../prj3/prj3.html" data-coord="prj4.umt:34:86">Project 3</a></em> to implement a single-page-app
+which allows you to:
+</p><ul data-coord="prj4.umt:38:0"><li data-coord="prj4.umt:38:0"><p data-coord="prj4.umt:38:4">Search a read-only book catalog.  
+</p></li><li data-coord="prj4.umt:40:0"><p data-coord="prj4.umt:40:4">Add search results to a shopping cart.
+</p></li></ul><p data-coord="prj4.umt:42:0">The following figure shows how this project will interact with
+your earlier project:
+</p><img src="figs/arch.png" height="216"/><p data-coord="prj4.umt:47:0">The operation of the code is best illustrated by playing with a
+<em data-coord="prj4.umt:47:79"><a href="extras/dist" data-coord="prj4.umt:47:79">running version</a></em> of the code Note that this is
+accessible only from inside the department firewall and requires the
+browser to allow mixed content (set up in Chrome by using the <samp data-coord="prj4.umt:47:258">Site
+Settings</samp> menu accessed by clicking on the security icon in the
+browser's URL address bar).
+</p><p data-coord="prj4.umt:54:0">A lot of code has been provided for this project.  The code
+is organized in layers so that code at higher levels
+depends on code at lower levels, but not vice-versa:
+</p><img src="figs/org.png" height="144"/><ul data-coord="prj4.umt:60:0"><li data-coord="prj4.umt:60:0"><p data-coord="prj4.umt:60:4">The lowest layer uses <a href="https://www.npmjs.com/package/axios" data-coord="prj4.umt:60:65">axios</a>
+to interface with the <em data-coord="prj4.umt:60:118"><a href="../prj3/prj3.html" data-coord="prj4.umt:60:118">project 3 web
+    services</a></em>.
+</p></li><li data-coord="prj4.umt:64:0"><p data-coord="prj4.umt:64:4">The next layer up uses the web service layer to build immutable
+<samp data-coord="prj4.umt:64:72">Book</samp> and <samp data-coord="prj4.umt:64:83">Cart</samp> model objects.
+</p></li><li data-coord="prj4.umt:67:0"><p data-coord="prj4.umt:67:4">The topmost layer uses <a href="https://reactjs.org/docs/" data-coord="prj4.umt:67:56">reactjs</a> to
+build components which are displayed in the browser.  The outermost
+component is provided by <samp data-coord="prj4.umt:67:168">app.jsx</samp> which displays the overall
+app; it uses <samp data-coord="prj4.umt:67:222">tab.jsx</samp> (not shown in the figure) to display
+two tabs for searching the book catalog and viewing/modifying
+the current shopping cart.  Some of the main components are
+<samp data-coord="prj4.umt:67:403">books.jsx</samp> responsible for displaying the book search and
+<samp data-coord="prj4.umt:67:466">cart.jsx</samp> responsible for displaying the cart.
+</p><p data-coord="prj4.umt:76:4">The <samp data-coord="prj4.umt:76:8">app</samp> component provides a global context via which the
+components communicate.
+</p><ul data-coord="prj4.umt:79:0"><li data-coord="prj4.umt:79:0"><p data-coord="prj4.umt:79:8">It is responsible for maintaining the
+shopping cart.
+</p></li><li data-coord="prj4.umt:82:0"><p data-coord="prj4.umt:82:8">It paints the <samp data-coord="prj4.umt:82:22">books</samp> and <samp data-coord="prj4.umt:82:34">cart</samp>
+components in separate tabs.
+</p></li><li data-coord="prj4.umt:85:0"><p data-coord="prj4.umt:85:8">The <samp data-coord="prj4.umt:85:12">books</samp> component uses an
+<samp data-coord="prj4.umt:85:46">app.buy()</samp> callback to add an item to the shopping cart.
+</p></li><li data-coord="prj4.umt:88:0"><p data-coord="prj4.umt:88:8">The <samp data-coord="prj4.umt:88:12">cart</samp> component uses an <samp data-coord="prj4.umt:88:37">app.update()</samp> callback to update
+the contents of the cart.
+</p></li></ul></li></ul></section><section data-coord="prj4.umt:91:0"><h2 data-coord="prj4.umt:91:0">Requirements</h2><p data-coord="prj4.umt:95:0">You must push a <samp data-coord="prj4.umt:95:16">submit/prj4-sol</samp> directory to your github repository
+such that typing <samp data-coord="prj4.umt:95:87">npm ci</samp> followed by <samp data-coord="prj4.umt:95:108">npm run build:dev</samp> and <samp data-coord="prj4.umt:95:132">npm
+start</samp> within that directory starts a server.  Accessing that server
+using a browser should display the app using the <em data-coord="prj4.umt:95:276"><a href="../prj3/prj3.html" data-coord="prj4.umt:95:276">project 3 web services</a></em> running at <em data-coord="prj4.umt:95:346"><a href="http://zdu.binghamton.edu:2345" data-coord="prj4.umt:95:346">&lt;http://zdu.binghamton.edu:2345&gt;</a></em> (accessible only from inside the department firewall with browser
+which allows mixed content).  If web services are running at a
+different URL, then the <samp data-coord="prj4.umt:95:502">prj4-setup.html</samp> page should be used to
+provide that alternate URL.
+</p><p data-coord="prj4.umt:105:0">The application should display two tabs:
+</p><dl data-coord="prj4.umt:107:0"><dt data-coord="prj4.umt:107:2"> Books Search </dt><dd data-coord="prj4.umt:109:0"><p data-coord="prj4.umt:109:4">The contents of this tab is exemplified by the following
+image:
+</p><img src="figs/books.png" height="142"/><p data-coord="prj4.umt:114:4">This tab should display a text input field.  Blurring that field
+or typing an <samp data-coord="prj4.umt:114:86">enter</samp> key into it should do a <samp data-coord="prj4.umt:114:118">authorsTitleSearch</samp>
+of the books catalog for the contents of the field.  This search
+should <strong data-coord="prj4.umt:114:219">not</strong> be performed if the contents of the field are empty
+or unchanged from its previous contents.
+</p><p data-coord="prj4.umt:120:4">The results containing the books which match the search should be
+displayed below the text input field.
+</p><ul data-coord="prj4.umt:123:0"><li data-coord="prj4.umt:123:0"><p data-coord="prj4.umt:123:8">All the information for a matching book should be shown.
+</p></li><li data-coord="prj4.umt:125:0"><p data-coord="prj4.umt:125:8">Each author must be display in the form as <samp data-coord="prj4.umt:125:51">firstName
+        lastName</samp>.  Multiple authors must be separated by <samp data-coord="prj4.umt:125:120">, </samp> except
+for the last author which must be preceeded the word <samp data-coord="prj4.umt:125:193">and</samp>.
+</p></li><li data-coord="prj4.umt:129:0"><p data-coord="prj4.umt:129:8">There should be a <samp data-coord="prj4.umt:129:26">Buy</samp> button associated with each matching
+book.  Clicking on this button should add one unit of
+that book to the current shopping cart.  If the shopping
+cart already contains a line-item for that book, then the
+count associated with that line-item should be incremented
+by one.
+</p></li><li data-coord="prj4.umt:136:0"><p data-coord="prj4.umt:136:8">If applicable, <samp data-coord="prj4.umt:136:23">Next</samp> and <samp data-coord="prj4.umt:136:34">Previous</samp> controls should
+be displayed after the results.  Clicking on these controls
+should allow scrolling through all the results matching
+the search.
+</p></li></ul></dd><dt data-coord="prj4.umt:141:2"> Shopping Cart </dt><dd data-coord="prj4.umt:142:0"><p data-coord="prj4.umt:142:4">The contents of this tab is exemplified by the following
+image:
+</p><img src="figs/cart.png" height="142"/><p data-coord="prj4.umt:147:4">This tab should display the contents of the current shopping cart.
+The display should consist of a sequence of line-items containing
+a brief description of the book and the quantity for that book:
+</p><ul data-coord="prj4.umt:151:0"><li data-coord="prj4.umt:151:0"><p data-coord="prj4.umt:151:8">The description provided for a book should only include
+the title and authors information.
+</p></li><li data-coord="prj4.umt:154:0"><p data-coord="prj4.umt:154:8">The quantity should be displayed using a select box.
+The select box should allow changing the quantity
+to a value between 0 and 9 (choosing <samp data-coord="prj4.umt:154:157">0</samp> should
+effectively delete that book from the shopping cart).
+</p></li></ul><p data-coord="prj4.umt:159:4">The shopping cart should have the following additional properties:
+</p><ul data-coord="prj4.umt:161:0"><li data-coord="prj4.umt:161:0"><p data-coord="prj4.umt:161:8">The shopping cart should persist over browser sessions; i.e.
+it should survive browser shutdowns.
+</p></li><li data-coord="prj4.umt:164:0"><p data-coord="prj4.umt:164:8">There is no requirement that the same shopping cart be
+available across different browsers.
+</p></li><li data-coord="prj4.umt:167:0"><p data-coord="prj4.umt:167:8">The application should not crash or hang if the shopping cart
+is deleted from the underlying database.  When this is detected,
+the operation being attempted should succeed, albeit on a new
+empty shopping cart.
+</p><p data-coord="prj4.umt:172:1">[The reason for this requirement is to give me the flexibility
+to purge the database if I find that it contains too many
+student shopping carts.  Nevertheless, this is also a useful
+requirement for a real e-commerce web site to cope with
+unexpected back-end behavior; a customer is more likely to
+dismiss a suddenly empty shopping cart as a glitch rather than
+a crashed or hung application.]
+</p></li></ul></dd></dl><p data-coord="prj4.umt:180:0">The project has the following negative requirements:
+</p><ul data-coord="prj4.umt:182:0"><li data-coord="prj4.umt:182:0"><p data-coord="prj4.umt:182:4">There is no requirement on the styling of the content.
+</p><p data-coord="prj4.umt:184:4">[If you follow the suggestions provided in the <a href="#hints" data-coord="prj4.umt:184:61">Hints,</a>
+you should obtain reasonable styling using the provided
+<em data-coord="prj4.umt:184:169"><a href="prj4-sol/statics/styles/style.css" data-coord="prj4.umt:184:169">style sheet</a></em>.]
+</p></li><li data-coord="prj4.umt:188:0"><p data-coord="prj4.umt:188:4">The application is simple enough that user-errors are
+impossible.  If any non-user errors (like network errors) occur,
+it is sufficient for the application to report the error on the
+browser's console, even though the application may crash or hang.
+</p><p data-coord="prj4.umt:193:4">[Such error handling would be unacceptable for a real
+application.]
+</p></li></ul></section><section data-coord="prj4.umt:196:0"><h2 data-coord="prj4.umt:196:0">Packaging</h2><p data-coord="prj4.umt:199:0">We will be using <a href="https://webpack.js.org/" data-coord="prj4.umt:199:44">webpack</a> to package all our
+code together and <a href="https://babeljs.io/" data-coord="prj4.umt:199:112">babeljs</a> to compile React's
+<samp data-coord="prj4.umt:199:139">jsx</samp> components into standard JavaScript.
+</p><ul data-coord="prj4.umt:203:0"><li data-coord="prj4.umt:203:0"><p data-coord="prj4.umt:203:4">The <a href="https://www.npmjs.com/package/babel-loader" data-coord="prj4.umt:203:54">babel-loader</a>
+is used to interface webpack to babel.
+</p></li><li data-coord="prj4.umt:206:0"><p data-coord="prj4.umt:206:4">Babel is configured to use the
+<em data-coord="prj4.umt:206:88"><a href="https://babeljs.io/docs/en/babel-preset-react" data-coord="prj4.umt:206:88">react preset</a></em>.
+</p></li><li data-coord="prj4.umt:209:0"><p data-coord="prj4.umt:209:4">Webpack is run from the command-line using
+<a href="https://www.npmjs.com/package/webpack-cli" data-coord="prj4.umt:209:96">webpack-cli.</a>
+</p></li><li data-coord="prj4.umt:212:0"><p data-coord="prj4.umt:212:4">The <a href="https://webpack.js.org/configuration/dev-server/" data-coord="prj4.umt:212:64">webpack-dev-server</a> is used to set up a server to serve up the app.
+It provides
+<em data-coord="prj4.umt:212:210"><a href="https://webpack.js.org/concepts/hot-module-replacement/" data-coord="prj4.umt:212:210">hot
+    module replacement</a></em> to obtain a pleasant development experience.
+</p></li></ul><p data-coord="prj4.umt:218:0">Note that webpack uses the default &lt;prj4-sol/src/index.js&gt;
+src/index.js as its entry-point and produces its output bundle in the
+default <samp data-coord="prj4.umt:218:137">dist</samp> directory.  Note that the <samp data-coord="prj4.umt:218:170">webpack-dev-server</samp> produces
+the bundle in its memory instead of in the filesystem.
+</p></section><section data-coord="prj4.umt:223:0"><h2 data-coord="prj4.umt:223:0">Provided Files</h2><p data-coord="prj4.umt:226:0">The <a href="./prj4-sol" data-coord="prj4.umt:226:18">prj4-sol</a> directory contains a start for your
+project.  It contains the following files:
+</p><dl data-coord="prj4.umt:229:0"><dt data-coord="prj4.umt:229:4"> React components in <a href="prj4-sol/src/components" data-coord="prj4.umt:229:48">components</a> </dt><dd data-coord="prj4.umt:230:0"><p data-coord="prj4.umt:230:6">This includes <a href="prj4-sol/src/components/books.jsx?colorize=true" data-coord="prj4.umt:230:77">books.jsx</a> and <a href="prj4-sol/src/components/cart.jsx?colorize=true" data-coord="prj4.umt:230:147">cart.jsx</a> skeleton files to which you will need to add code.  It
+also includes the file
+<a href="prj4-sol/src/components/app.jsx?colorize=true" data-coord="prj4.umt:230:295">app.jsx</a> file
+which provides the outermost application container.  It contains
+callbacks which can be called by your <samp data-coord="prj4.umt:230:423">books</samp> and <samp data-coord="prj4.umt:230:435">cart</samp>
+components.
+</p></dd><dt data-coord="prj4.umt:239:4"> Library files in <a href="prj4-sol/src/lib" data-coord="prj4.umt:239:38">src/lib</a></dt><dd data-coord="prj4.umt:240:0"><p data-coord="prj4.umt:240:6">These include <a href="prj4-sol/src/lib/ws.mjs?colorize=true" data-coord="prj4.umt:240:61">ws.mjs</a>
+interface to web services, as well as the files
+<a href="prj4-sol/src/lib/book.mjs?colorize=true" data-coord="prj4.umt:240:171">book.mjs</a> and
+<a href="prj4-sol/src/lib/cart.mjs?colorize=true" data-coord="prj4.umt:240:233">cart.mjs</a> which
+extract <samp data-coord="prj4.umt:240:262">Book</samp> and <samp data-coord="prj4.umt:240:273">Cart</samp> models from the web services,
+</p><p data-coord="prj4.umt:246:6">Note that the <samp data-coord="prj4.umt:246:20">Cart</samp> model contains more information than
+available from the raw cart web service; specifically, each
+line-item within the cart is enhanced with a <samp data-coord="prj4.umt:246:181">Book</samp> model
+object containing all the information about the corresponding
+book.
+</p><p data-coord="prj4.umt:252:6">The <samp data-coord="prj4.umt:252:10">lib</samp> directory also includes a
+<a href="prj4-sol/src/lib/cache.mjs?colorize=true" data-coord="prj4.umt:252:92">cache.mjs</a> to allow
+caching book information within the browser.  This is a skeleton
+file which you will need to trivially complete.
+</p></dd><dt data-coord="prj4.umt:257:4"> Startup files </dt><dd data-coord="prj4.umt:258:0"><p data-coord="prj4.umt:258:6">The <a href="prj4-sol/src/index.js?colorize=true" data-coord="prj4.umt:258:49">index.js</a> file serves
+as an entry point for webpack.  It merely defers to
+<a href="prj4-sol/src/root.mjs?colorize=true" data-coord="prj4.umt:258:173">root.mjs</a> which is used to
+inject the app into the HTML page.
+</p></dd><dt data-coord="prj4.umt:263:4"> Static files in <a href="prj4-sol/src/statics" data-coord="prj4.umt:263:41">statics</a> </dt><dd data-coord="prj4.umt:264:0"><p data-coord="prj4.umt:264:6">These include:
+</p><ul data-coord="prj4.umt:266:0"><li data-coord="prj4.umt:266:0"><p data-coord="prj4.umt:266:10">The HTML file <samp data-coord="prj4.umt:266:24">index.html</samp> which hosts the entire
+application
+</p></li><li data-coord="prj4.umt:269:0"><p data-coord="prj4.umt:269:10">The HTML file <samp data-coord="prj4.umt:269:24">prj4-setup.html</samp> which can be used to provide
+an alternate URL for the web services.
+</p></li><li data-coord="prj4.umt:272:0"><p data-coord="prj4.umt:272:10">The stylesheet <a href="prj4-sol/src/statics/styles/tab.css" data-coord="prj4.umt:272:74">tab.css</a> which is used to implement tabs without using
+JavaScript.
+</p></li><li data-coord="prj4.umt:276:0"><p data-coord="prj4.umt:276:10">The stylesheet <a href="prj4-sol/src/statics/styles/style.css" data-coord="prj4.umt:276:69">style.css</a> which sets up reasonable styling for the
+application.
+</p></li></ul></dd><dt data-coord="prj4.umt:280:4"> <a href="./prj4-sol/package.json?colorize=true" data-coord="prj4.umt:280:42">package.json</a> </dt><dd data-coord="prj4.umt:281:0"><p data-coord="prj4.umt:281:6">This is set up with all the dependencies for your project,
+including the webpack development dependencies and the
+react and axios runtime dependencies.
+</p><p data-coord="prj4.umt:285:6">It includes the following scripts which can be run using
+<samp data-coord="prj4.umt:285:69">npm run</samp>:
+</p><dl data-coord="prj4.umt:288:0"><dt data-coord="prj4.umt:288:8"> <samp data-coord="prj4.umt:288:1">start</samp> </dt><dd data-coord="prj4.umt:289:0"><p data-coord="prj4.umt:289:3">Used for starting the <samp data-coord="prj4.umt:289:25">webpack-dev-server</samp>.
+</p></dd><dt data-coord="prj4.umt:291:8"> <samp data-coord="prj4.umt:291:1">build:dev</samp>, <samp data-coord="prj4.umt:291:14">build:prod</samp> </dt><dd data-coord="prj4.umt:292:0"><p data-coord="prj4.umt:292:3">Used for building versions for application for development
+and production in the <samp data-coord="prj4.umt:292:87">dist</samp> directory.  Note that the
+development version includes source maps whereas the
+production version generates minified and obfuscated code.
+</p><p data-coord="prj4.umt:297:3">In addition to building the webpack bundle, running these
+scripts copies HTML and <samp data-coord="prj4.umt:297:88">css</samp> files from the <samp data-coord="prj4.umt:297:109">src/statics</samp>
+directory to the <samp data-coord="prj4.umt:297:143">dist</samp> directory.
+</p></dd><dt data-coord="prj4.umt:301:8"> <samp data-coord="prj4.umt:301:1">clean</samp> </dt><dd data-coord="prj4.umt:302:0"><p data-coord="prj4.umt:302:3">Used for removing the <samp data-coord="prj4.umt:302:25">dist</samp> directory.
+</p></dd></dl></dd><dt data-coord="prj4.umt:304:4"> Configuration Files </dt><dd data-coord="prj4.umt:305:0"><p data-coord="prj4.umt:305:6">The configuration file
+<a href="./prj4-sol/webpack.config.js?colorize=true" data-coord="prj4.umt:305:81">webpack.config.js</a>
+for webpack and the <a href="./prj4-sol/.babelrc" data-coord="prj4.umt:305:148">babelrc</a> dot-file for
+babel.
+</p></dd><dt data-coord="prj4.umt:311:4"> <a href="./prj4-sol/README" data-coord="prj4.umt:311:22">README</a></dt><dd data-coord="prj4.umt:312:0"><p data-coord="prj4.umt:312:6">A README file which must be submitted along with your project.
+It contains an initial header which you must complete (replace
+the dummy entries with your name, B-number and email address at
+which you would like to receive project-related email).  After
+the header you may include any content which you would like read
+during the grading of your project.
+</p></dd></dl><p data-coord="prj4.umt:319:0">The files you will definitely need to modify are
+<a href="prj4-sol/src/components/books.jsx?colorize=true" data-coord="prj4.umt:319:100">books.jsx,</a>
+<a href="prj4-sol/src/components/cart.jsx?colorize=true" data-coord="prj4.umt:319:161">cart.jsx,</a>
+<a href="prj4-sol/src/lib/cache.mjs?colorize=true" data-coord="prj4.umt:319:215">cache.mjs</a> and the
+<a href="./prj4-sol/README" data-coord="prj4.umt:319:254">README.</a>  You should not need to change the other
+files but are not forbidden from doing so.
+</p></section><section data-coord="prj4.umt:326:0"><h2 data-coord="prj4.umt:326:0">Hints</h2><p data-coord="prj4.umt:329:0"><span id="hints" data-coord="prj4.umt:329:9">The</span> following points are worth noting:
+</p><ul data-coord="prj4.umt:331:0"><li data-coord="prj4.umt:331:0"><p data-coord="prj4.umt:331:4">The application is required to persist shopping carts across
+browser sessions.  Fortunately, the provided RESTful web services
+persist the contents of each shopping cart at a distinct URL.  So
+it is sufficient for the browser to merely persist the web service
+URL for a shopping cart across browser sessions.  Possibilities
+include:
+</p><ul data-coord="prj4.umt:338:0"><li data-coord="prj4.umt:338:0"><p data-coord="prj4.umt:338:8"><strong data-coord="prj4.umt:338:8">Non-session cookies</strong>. This has the advantage that the cookie
+could also be sent to the server, but that is not necessary
+for this project.
+</p></li><li data-coord="prj4.umt:342:0"><p data-coord="prj4.umt:342:8"><strong data-coord="prj4.umt:342:8">Local Storage</strong> using the browser's
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" data-coord="prj4.umt:342:132">window.localStorage</a> API.
+</p><p data-coord="prj4.umt:346:8">[Note that by definition,
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage" data-coord="prj4.umt:346:124">window.sessionStorage</a> would not work.]
+</p></li></ul><p data-coord="prj4.umt:350:4">The provided code uses the second alternative, primarily because
+of the browser provided cookie API (based on
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie" data-coord="prj4.umt:350:194">document.cookie)</a> is slightly messy.
+</p></li><li data-coord="prj4.umt:355:0"><p data-coord="prj4.umt:355:4">The web services which return a cart do not return the actual
+details of books but only links to them.  Hence displaying the
+actual <strong data-coord="prj4.umt:355:144">contents</strong> of the shopping cart conceptually requires
+separate web service calls to obtain the details of each separate
+book in the cart.
+</p><p data-coord="prj4.umt:361:4">These separate calls can be avoided by caching the details of each
+shopping cart book in the browser.  The cache uses the browser's
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage" data-coord="prj4.umt:361:222">window.sessionStorage,</a> though
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" data-coord="prj4.umt:361:332">window.localStorage</a> would also work.
+</p><p data-coord="prj4.umt:368:4">[Note that this caching is only in order to obtain better
+performance.  This is unlike the storing of the cache ID in
+<samp data-coord="prj4.umt:368:130">window.localStorage</samp>, which is necessary for correctness in order
+to fulfil the requirements].
+</p></li><li data-coord="prj4.umt:373:0"><p data-coord="prj4.umt:373:4">The <samp data-coord="prj4.umt:373:8">app</samp> <a href="prj4-sol/src/components/app.jsx?colorize=true" data-coord="prj4.umt:373:67">component</a> maintains the currently selected tab as part of its
+state.  The state also contains the current contents of the
+shopping cart as an instance of the
+<em data-coord="prj4.umt:373:280"><a href="prj4-sol/src/lib/cart.mjs?colorize=true" data-coord="prj4.umt:373:280">cart model</a></em>.
+</p></li><li data-coord="prj4.umt:379:0"><p data-coord="prj4.umt:379:4">The <samp data-coord="prj4.umt:379:8">app</samp> <a href="prj4-sol/src/components/app.jsx?colorize=true" data-coord="prj4.umt:379:63">component</a> is sent down to child components via <samp data-coord="prj4.umt:379:110">props</samp> as an <samp data-coord="prj4.umt:379:124">app</samp> property.  It can be
+ used for the following purposes:
+</p><ol data-coord="prj4.umt:382:0"><li data-coord="prj4.umt:382:0"><p data-coord="prj4.umt:382:8">To access an instance of the
+<a href="prj4-sol/src/lib/ws.mjs?colorize=true" data-coord="prj4.umt:382:86">ws.mjs&gt;</a> <em data-coord="prj4.umt:382:94">web
+        service client</em> using <samp data-coord="prj4.umt:382:129">app.ws</samp>.
+</p></li><li data-coord="prj4.umt:386:0"><p data-coord="prj4.umt:386:8">To allow switching to a specific tab using either the callback
+<samp data-coord="prj4.umt:386:79">app.select('books')</samp> or the callback <samp data-coord="prj4.umt:386:117">app.select('cart')</samp>.
+</p></li><li data-coord="prj4.umt:389:0"><p data-coord="prj4.umt:389:8">To purchase a book from search results using the <samp data-coord="prj4.umt:389:57">app.buy()</samp>
+callback.
+</p></li><li data-coord="prj4.umt:392:0"><p data-coord="prj4.umt:392:8">To update the quantity of a book in the shopping cart using
+the <samp data-coord="prj4.umt:392:80">app.update()</samp> callback.
+</p></li></ol></li><li data-coord="prj4.umt:395:0"><p data-coord="prj4.umt:395:4">Since <samp data-coord="prj4.umt:395:10">for</samp> and <samp data-coord="prj4.umt:395:20">class</samp> are reserved within certain contexts in
+JavaScript, react allows using <samp data-coord="prj4.umt:395:103">htmlFor</samp> and <samp data-coord="prj4.umt:395:117">className</samp> instead
+as attributes for JSX elements corresponding to HTML elements.
+</p></li><li data-coord="prj4.umt:399:0"><p data-coord="prj4.umt:399:4">A JSX literal in your code must consist of only a single
+XML-element at the top-level.  For example, the following is
+legal:
+</p><pre>    <span class="hl kwa">&lt;ul&gt;</span>
+      <span class="hl kwa">&lt;li&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>
+      <span class="hl kwa">&lt;li&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>
+      <span class="hl kwa">&lt;li&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>
+    <span class="hl kwa">&lt;/ul&gt;</span></pre><p data-coord="prj4.umt:412:4">but the following is not:
+</p><pre>      <span class="hl kwa">&lt;li&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>
+      <span class="hl kwa">&lt;li&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>
+      <span class="hl kwa">&lt;li&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span></pre><p data-coord="prj4.umt:421:4">If you need multiple elements as a top-level literal, then
+they must be within a top-level list.  However, each element
+in a JSX list literal  must have a distinct <samp data-coord="prj4.umt:421:176">key</samp> attribute:
+</p><pre>    [
+      <span class="hl kwa">&lt;li</span> <span class="hl kwb">key</span>=<span class="hl str">&quot;0&quot;</span><span class="hl kwa">&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>,
+      <span class="hl kwa">&lt;li</span> <span class="hl kwb">key</span>=<span class="hl str">&quot;1&quot;</span><span class="hl kwa">&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>,
+      <span class="hl kwa">&lt;li</span> <span class="hl kwb">key</span>=<span class="hl str">&quot;2&quot;</span><span class="hl kwa">&gt;</span>...<span class="hl kwa">&lt;/li&gt;</span>,
+    ]</pre><p data-coord="prj4.umt:434:4">Note that the <samp data-coord="prj4.umt:434:18">key</samp>'s can be any <samp data-coord="prj4.umt:434:37">String</samp> as long as all the <samp data-coord="prj4.umt:434:65">key</samp>
+values within a single list are distinct,
+</p></li><li data-coord="prj4.umt:438:0"><p data-coord="prj4.umt:438:4">It is assumed that you know how to use the excellent debuggers
+available within modern browsers.
+</p></li></ul><p data-coord="prj4.umt:441:0">The following steps are not prescriptive in that you may choose to
+ignore them as long as you meet all project requirements.
+</p><ol data-coord="prj4.umt:444:0"><li data-coord="prj4.umt:444:0"><p data-coord="prj4.umt:444:4">Read the project requirements thoroughly.  Look at the
+<em data-coord="prj4.umt:444:78"><a href="extras/dist" data-coord="prj4.umt:444:78">running application</a></em> to make sure you understand
+the necessary behavior (your browser allow mixed content and must
+be running inside the department firewall).  Review the material
+covered in class including <a href="../../slides/reactjs.html" data-coord="prj4.umt:444:327">reactjs</a>
+and the <a href="../../slides/users-app/code/users-app" data-coord="prj4.umt:444:388">users-app</a>
+example.
+</p></li><li data-coord="prj4.umt:452:0"><p data-coord="prj4.umt:452:4">Decide whether you want to use your solution to
+<em data-coord="prj4.umt:452:77"><a href="../prj3/prj3.html" data-coord="prj4.umt:452:77">Project 3</a></em>, or the <em data-coord="prj4.umt:452:112"><a href="../prj3-sol" data-coord="prj4.umt:452:112">class
+    solution</a></em>.  If using the former, please review the
+<em data-coord="prj4.umt:452:200"><a href="../prj3-sol/README" data-coord="prj4.umt:452:200">Project 3 Solution README</a></em> for the minor
+changes made to the solution to make it suitable for this project
+and apply those same changes to your solution (note the Project 3
+solution links will work only once the solution is published after
+the late submission deadline).
+</p></li><li data-coord="prj4.umt:461:0"><p data-coord="prj4.umt:461:4">Set up your <samp data-coord="prj4.umt:461:16">prj4-sol</samp> branch and <samp data-coord="prj4.umt:461:38">submit/prj4-sol</samp> as per
+your previous projects.  You will not need to initialize
+the project using <samp data-coord="prj4.umt:461:146">npm init</samp> as a <samp data-coord="prj4.umt:461:162">package.json</samp> is already
+being provided.  What you will need to do is install all
+necessary modules using <samp data-coord="prj4.umt:461:277">npm install</samp>.
+</p></li><li data-coord="prj4.umt:468:0"><p data-coord="prj4.umt:468:4">You should be able to run the project after a
+<samp data-coord="prj4.umt:468:54">npm run build:dev</samp> (which copies the static files into
+the <samp data-coord="prj4.umt:468:118">dist</samp> directory, followed by an <samp data-coord="prj4.umt:468:151">npm start</samp>
+comand.
+</p><p data-coord="prj4.umt:473:4">If you point your browser to the server's port (usually
+<em data-coord="prj4.umt:473:89"><a href="http://localhost:8080" data-coord="prj4.umt:473:89">&lt;http://localhost:8080&gt;</a></em> if running on your VM) you should see
+the app outline without any of the required functionality.
+</p></li><li data-coord="prj4.umt:477:0"><p data-coord="prj4.umt:477:4">Complete the trivial <a href="prj4-sol/src/lib/cache.mjs?colorize=true" data-coord="prj4.umt:477:73">cache.mjs.</a>  This class encapsulates the choice of
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API" data-coord="prj4.umt:477:199">storage</a> between <samp data-coord="prj4.umt:477:215">window.sessionStorage</samp> and <samp data-coord="prj4.umt:477:243">window.localStorage</samp>.
+The provided code defaults to using <samp data-coord="prj4.umt:477:306">window.sessionStorage</samp>, but
+if implemented correctly, the caller can easily switch in
+<samp data-coord="prj4.umt:477:401">window.localStorage</samp> by provided it as an argument to the
+provided constructor.
+</p><p data-coord="prj4.umt:486:4">It is important to note that the <em data-coord="prj4.umt:486:109"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API" data-coord="prj4.umt:486:109">storage API</a></em> only allows storing key-value pairs where both the
+keys and values <strong data-coord="prj4.umt:486:194">must be Strings</strong>.  Hence before storing a
+book in the store, you should serialize it using
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" data-coord="prj4.umt:486:393">JSON.stringify()</a> and when reading from the
+store you should deserialize it using
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse" data-coord="prj4.umt:486:577">JSON.parse().</a>
+</p></li><li data-coord="prj4.umt:494:0"><p data-coord="prj4.umt:494:4">Start work on the
+<a href="prj4-sol/src/components/books.jsx?colorize=true" data-coord="prj4.umt:494:77">books.jsx</a>
+module.  The provided code provides skeletons for <samp data-coord="prj4.umt:494:141">Book</samp> and
+<samp data-coord="prj4.umt:494:156">Books</samp> components as these are exported by the module (the
+former is a named export whereas the latter is a default export).
+</p><ul data-coord="prj4.umt:500:0"><li data-coord="prj4.umt:500:0"><p data-coord="prj4.umt:500:8">The <samp data-coord="prj4.umt:500:12">Book</samp> component is used for displaying book information
+in both the search results as well as the shopping cart.
+</p></li><li data-coord="prj4.umt:503:0"><p data-coord="prj4.umt:503:8">The <samp data-coord="prj4.umt:503:12">Books</samp> component will use sub-components to display the
+search form, search results, and previous/next controls.  The
+current search results will be maintained within its <samp data-coord="prj4.umt:503:186">state</samp>.
+Note that the its <samp data-coord="prj4.umt:503:214">props</samp> are set up with an <samp data-coord="prj4.umt:503:241">app</samp> property.
+</p></li></ul><p data-coord="prj4.umt:508:4">To start with, set up the <samp data-coord="prj4.umt:508:30">Books</samp> component to display the search
+form.
+</p><p data-coord="prj4.umt:511:4">Implement a stateful <samp data-coord="prj4.umt:511:25">SearchForm</samp> component.  Set it up with an
+<samp data-coord="prj4.umt:511:72">app</samp> and <samp data-coord="prj4.umt:511:82">books</samp> property where the latter refers to the raw
+object instance of the <samp data-coord="prj4.umt:511:161">Books</samp> component; pass the <samp data-coord="prj4.umt:511:189">books</samp> <samp data-coord="prj4.umt:511:197">prop</samp>
+down from <samp data-coord="prj4.umt:511:218">Books</samp> to <samp data-coord="prj4.umt:511:229">SearchForm</samp>, the same way
+<em data-coord="prj4.umt:511:309"><a href="prj4-sol/src/components/app.jsx?colorize=true" data-coord="prj4.umt:511:309">the app
+    component</a></em> passes itself down to <samp data-coord="prj4.umt:511:355">Books</samp>.
+</p><p data-coord="prj4.umt:518:4">To start with, have the <samp data-coord="prj4.umt:518:28">SearchForm</samp> component simply <samp data-coord="prj4.umt:518:58">render()</samp>
+the form.  In order to hook into the provided stylesheet, you can
+render it along the following lines:
+</p><pre>    <span class="hl kwa">&lt;form</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;search&quot;</span><span class="hl kwa">&gt;</span>
+      <span class="hl kwa">&lt;label</span> <span class="hl kwb">htmlFor</span>=<span class="hl str">&quot;search&quot;</span><span class="hl kwa">&gt;</span>Search Catalog<span class="hl kwa">&lt;/label&gt;</span>
+      <span class="hl kwa">&lt;input</span> <span class="hl kwb">name</span>=<span class="hl str">&quot;authorsTitleSearch&quot;</span> <span class="hl kwb">id</span>=<span class="hl str">&quot;search&quot;</span><span class="hl kwa">/&gt;</span>
+    <span class="hl kwa">&lt;/form&gt;</span></pre></li><li data-coord="prj4.umt:530:0"><p data-coord="prj4.umt:530:4">Add an <samp data-coord="prj4.umt:530:11">onBlur()</samp> handler for the input textbox field to the
+<samp data-coord="prj4.umt:530:69">SearchForm</samp>; make sure to <samp data-coord="prj4.umt:530:96">bind()</samp> <samp data-coord="prj4.umt:530:105">this</samp> so that <samp data-coord="prj4.umt:530:120">this</samp> within
+the handler refers to the component and not to the DOM element.
+Since the handler is set up on the input textbox, the <samp data-coord="prj4.umt:530:260">target</samp>
+property of the <samp data-coord="prj4.umt:530:289">event</samp> argument to the handler will refer to the
+textbox.  You can access its value using the <samp data-coord="prj4.umt:530:388">value</samp> property.
+Once you have the value, simply use <samp data-coord="prj4.umt:530:446">app.ws.findBooks()</samp> to do the
+search.  Test by simply logging the output of the web service
+call.
+</p><p data-coord="prj4.umt:540:4">Set up code to ensure that you perform the search only when
+the provided <samp data-coord="prj4.umt:540:81">authorsDetailSearch</samp> is non-empty and not
+equal to its previous value.
+</p></li><li data-coord="prj4.umt:544:0"><p data-coord="prj4.umt:544:4">Add an <samp data-coord="prj4.umt:544:11">onSubmit()</samp> handler for the <samp data-coord="prj4.umt:544:40">&lt;form&gt;</samp> within the
+<samp data-coord="prj4.umt:544:64">SearchForm</samp> component.  Since we will be handling the submit
+entirely within our own code, prevent the default action of
+submitting to the server by using <samp data-coord="prj4.umt:544:228">event.preventDefault()</samp>.  Use
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector" data-coord="prj4.umt:544:341">Element.querySelector()</a> to access the <samp data-coord="prj4.umt:544:379">&lt;input&gt;</samp> element nested
+within the <samp data-coord="prj4.umt:544:419">&lt;form&gt;</samp>-element target of the <samp data-coord="prj4.umt:544:450">submit</samp> event.  Once
+you have the <samp data-coord="prj4.umt:544:489">&lt;input&gt;</samp>, the handler is pretty much identical
+to that of the <samp data-coord="prj4.umt:544:556">onBlur()</samp> handler.
+</p><p data-coord="prj4.umt:554:4">Since the code for the <samp data-coord="prj4.umt:554:27">onSubmit()</samp> and <samp data-coord="prj4.umt:554:44">onBlur()</samp> are very
+similar, use the <em data-coord="prj4.umt:554:132"><a href="https://refactoring.guru/extract-method" data-coord="prj4.umt:554:132">extract method pattern</a></em> to pull out the common code.
+</p></li><li data-coord="prj4.umt:558:0"><p data-coord="prj4.umt:558:4">Set up a callback handler within the <samp data-coord="prj4.umt:558:41">Books</samp> component to record
+search results within its <samp data-coord="prj4.umt:558:99">state</samp>.  Within your <samp data-coord="prj4.umt:558:121">SearchForm</samp>
+component, call this callback via <samp data-coord="prj4.umt:558:172">this.props.books</samp> passing in
+the search results.
+</p></li><li data-coord="prj4.umt:563:0"><p data-coord="prj4.umt:563:4">In order to display your results, you will need a non-stateful
+<samp data-coord="prj4.umt:563:71">Book</samp> component to display the information associated with a
+book.  It should accept at least two properties:
+</p><dl data-coord="prj4.umt:567:0"><dt data-coord="prj4.umt:567:6"> <samp data-coord="prj4.umt:567:1">book</samp> </dt><dd data-coord="prj4.umt:568:0"><p data-coord="prj4.umt:568:8">An object specifying a book.  Note that since JavaScript uses
+<em data-coord="prj4.umt:568:123"><a href="https://en.wikipedia.org/wiki/Duck_typing" data-coord="prj4.umt:568:123">duck typing</a></em>,
+the <samp data-coord="prj4.umt:568:150">book</samp> can be any object as long as it supports all the
+book properties defined for the earlier projects.  In
+particular, it can be a raw search result or it can be a
+<em data-coord="prj4.umt:568:384"><a href="prj4-sol/src/lib/book.mjs?colorize=true" data-coord="prj4.umt:568:384">book model
+        object</a></em>.
+</p></dd><dt data-coord="prj4.umt:576:6"> <samp data-coord="prj4.umt:576:1">full</samp> </dt><dd data-coord="prj4.umt:577:0"><p data-coord="prj4.umt:577:8">If specified as <code><span class="hl kwa">true</span></code> then all book fields should be
+rendered.  If specified as <code><span class="hl kwa">false</span></code>, then only the
+<samp data-coord="prj4.umt:577:116">title</samp> and <samp data-coord="prj4.umt:577:128">authors</samp> fields should be rendered.
+This <samp data-coord="prj4.umt:577:171">prop</samp> allows the same <samp data-coord="prj4.umt:577:194">Book</samp> component to be
+reused for both displaying search results as well
+as shopping cart line-items.
+</p></dd></dl><p data-coord="prj4.umt:584:4">In order to hook into the provided stylesheet, a <samp data-coord="prj4.umt:584:53">full</samp> <samp data-coord="prj4.umt:584:60">book</samp>
+should be rendered as follows:
+</p><pre>    <span class="hl kwa">&lt;div</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;book&quot;</span><span class="hl kwa">&gt;</span>
+      <span class="hl kwa">&lt;span</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;title&quot;</span><span class="hl kwa">&gt;</span>{title}<span class="hl kwa">&lt;/span&gt;</span>
+      <span class="hl kwa">&lt;span</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;authors&quot;</span><span class="hl kwa">&gt;</span>{authors}<span class="hl kwa">&lt;/span&gt;</span>
+      <span class="hl kwa">&lt;span</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;isbn&quot;</span><span class="hl kwa">&gt;&lt;label&gt;</span>ISBN:<span class="hl kwa">&lt;/label&gt;</span>{isbn}<span class="hl kwa">&lt;/span&gt;</span>
+      <span class="hl kwa">&lt;span</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;publisher&quot;</span><span class="hl kwa">&gt;</span>{publisher}<span class="hl kwa">&lt;/span&gt;</span>
+      <span class="hl kwa">&lt;span</span> <span class="hl kwb">key</span>=<span class="hl str">&quot;year&quot;</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;year&quot;</span><span class="hl kwa">&gt;</span>{year}, <span class="hl kwa">&lt;/span&gt;</span>
+      <span class="hl kwa">&lt;span</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;pages&quot;</span><span class="hl kwa">&gt;</span>{pages} pages<span class="hl kwa">&lt;/span&gt;</span>
+    <span class="hl kwa">&lt;/div&gt;</span></pre><p data-coord="prj4.umt:599:4">Make sure to flip the author first and last names and display them
+as per the requirements.
+</p></li><li data-coord="prj4.umt:602:0"><p data-coord="prj4.umt:602:4">Create a non-stateful <samp data-coord="prj4.umt:602:26">Results</samp> component to display the search
+results.  It should take two <samp data-coord="prj4.umt:602:101">props</samp>: the <samp data-coord="prj4.umt:602:114">app</samp> and the search
+results.  Add an instance of this component to your <samp data-coord="prj4.umt:602:191">Books</samp> component
+passing in the <samp data-coord="prj4.umt:602:228">app</samp> and the search results (from that recorded
+within the <samp data-coord="prj4.umt:602:292">state</samp> in the previous step).  Set up the rendering
+to render the books in the search results using your previously
+built <samp data-coord="prj4.umt:602:423">Book</samp> component.
+</p></li><li data-coord="prj4.umt:610:0"><p data-coord="prj4.umt:610:4">Add a <samp data-coord="prj4.umt:610:10">Buy</samp> button to each book search result.  In order to hook
+into the provided stylesheet, you can render it along the
+following lines:
+</p><pre>    <span class="hl kwa">&lt;div</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;result&quot;</span> key={i}<span class="hl kwa">&gt;</span>
+       <span class="hl kwa">&lt;Book</span> book={bookSearchResult} full={true}<span class="hl kwa">/&gt;</span>
+       <span class="hl kwa">&lt;div</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;buy&quot;</span><span class="hl kwa">&gt;&lt;button&gt;</span>Buy<span class="hl kwa">&lt;/button&gt;&lt;/div&gt;</span>
+    <span class="hl kwa">&lt;/div&gt;</span></pre></li><li data-coord="prj4.umt:622:0"><p data-coord="prj4.umt:622:4">Set up the <samp data-coord="prj4.umt:622:15">onClick</samp> handler within for the <samp data-coord="prj4.umt:622:48">Buy</samp> button
+to call <samp data-coord="prj4.umt:622:73">app.buy(bookSearchResult)</samp>.  After buying a book,
+verify that the <samp data-coord="prj4.umt:622:144">app.state.cart</samp> contains the book.
+</p></li><li data-coord="prj4.umt:626:0"><p data-coord="prj4.umt:626:4">Start implementing the <samp data-coord="prj4.umt:626:27">cart</samp> component in the provided
+<a href="prj4-sol/src/components/cart.jsx?colorize=true" data-coord="prj4.umt:626:114">cart.jsx</a>
+skeleton file.  Note that the <samp data-coord="prj4.umt:626:157">app</samp> is set up to render the <samp data-coord="prj4.umt:626:187">cart</samp>,
+passing in the <samp data-coord="prj4.umt:626:214">app</samp> and <samp data-coord="prj4.umt:626:224">items</samp> <samp data-coord="prj4.umt:626:232">props</samp> (the latter represents
+the line-items of the shopping cart where each line-item contains
+not only the <samp data-coord="prj4.umt:626:350">sku</samp> and <samp data-coord="prj4.umt:626:360">nUnits</samp> but also all the information about
+the corresponding book).  The <samp data-coord="prj4.umt:626:438">cart</samp> component need only set up
+its <samp data-coord="prj4.umt:626:480">render()</samp> to map each line-item into a <samp data-coord="prj4.umt:626:520">LineItem</samp> component
+which you will implement next.
+</p></li><li data-coord="prj4.umt:638:0"><p data-coord="prj4.umt:638:4">Add a stateful <samp data-coord="prj4.umt:638:19">LineItem</samp> component to your <samp data-coord="prj4.umt:638:48">cart.jsx</samp> file.  It
+should take as <samp data-coord="prj4.umt:638:88">props</samp> the <samp data-coord="prj4.umt:638:100">app</samp> and an <samp data-coord="prj4.umt:638:113">item</samp> representing the
+line-item.  It should maintain <samp data-coord="prj4.umt:638:172">nUnits</samp> within its state
+initialized to <samp data-coord="prj4.umt:638:217">props.item.nUnits</samp>.
+</p><p data-coord="prj4.umt:643:4">In order to hook into the provided stylesheet, you can render it
+along the following lines:
+</p><pre>    <span class="hl kwa">&lt;div</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;line-item&quot;</span><span class="hl kwa">&gt;</span>
+       <span class="hl kwa">&lt;Book</span> book={book} full={false}<span class="hl kwa">/&gt;</span>
+       <span class="hl kwa">&lt;div</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;nUnits&quot;</span><span class="hl kwa">&gt;&lt;label&gt;</span>Quantity<span class="hl kwa">&lt;/label&gt;</span>{select}<span class="hl kwa">&lt;/div&gt;</span>
+    <span class="hl kwa">&lt;/div&gt;</span></pre><p data-coord="prj4.umt:654:4">where <samp data-coord="prj4.umt:654:10">{book}</samp> is the book contained within the line-item
+and <samp data-coord="prj4.umt:654:70">{select}</samp> is a select box set up to include the options
+<samp data-coord="prj4.umt:654:131">0 (delete)</samp> to <samp data-coord="prj4.umt:654:147">9</samp> with its <samp data-coord="prj4.umt:654:160">value</samp> property set to <samp data-coord="prj4.umt:654:184">nUnits</samp>
+of the line-item.
+</p></li><li data-coord="prj4.umt:659:0"><p data-coord="prj4.umt:659:4">Add an <samp data-coord="prj4.umt:659:11">onChange</samp> handler to the <strong data-coord="prj4.umt:659:37">Quantity</strong> select box so that any
+change in its value changes the value of the <samp data-coord="prj4.umt:659:120">nUnits</samp> in the
+state, as well as calls <samp data-coord="prj4.umt:659:164">app.update()</samp> passing in the line-item
+book and the new <samp data-coord="prj4.umt:659:225">nUnits</samp>.
+</p></li><li data-coord="prj4.umt:664:0"><p data-coord="prj4.umt:664:4">Return to your <samp data-coord="prj4.umt:664:19">books.jsx</samp> to set up scrolling through the search
+results.  Note that the code for scrolling for <samp data-coord="prj4.umt:664:121">next</samp> and <samp data-coord="prj4.umt:664:132">prev</samp>
+are very similar and can be factored out by having two instances
+of the same component.  This step is not spelt out in detail as
+you should now have enough experience with react to do it
+yourself.
+</p><p data-coord="prj4.umt:671:4">However, if you wish to hook into the provided stylesheet, you can
+render it along the following lines:
+</p><pre>    <span class="hl kwa">&lt;span</span> <span class="hl kwb">className</span>=<span class="hl str">&quot;scroll&quot;</span><span class="hl kwa">&gt;</span>
+      <span class="hl kwa">&lt;a</span> <span class="hl kwb">href</span>=<span class="hl str">&quot;#&quot;</span> rel={dir}<span class="hl kwa">&gt;</span>{SCROLLS[dir]}<span class="hl kwa">&lt;/a&gt;</span>
+    <span class="hl kwa">&lt;/span&gt;</span></pre><p data-coord="prj4.umt:681:4">where <samp data-coord="prj4.umt:681:10">dir</samp> is either <samp data-coord="prj4.umt:681:26">prev</samp> or <samp data-coord="prj4.umt:681:36">next</samp>. Note that the scrolling
+should occur when the <samp data-coord="prj4.umt:681:94">&lt;a&gt;</samp> element is clicked; once again, the
+default browser click behavior should be turned off using
+<samp data-coord="prj4.umt:681:202">event.preventDefault()</samp>.
+</p></li><li data-coord="prj4.umt:686:0"><p data-coord="prj4.umt:686:4">Iterate until you meet all requirements.  
+</p></li></ol><p data-coord="prj4.umt:688:0">It is a good idea to commit and push your project periodically
+whenever you have made significant changes.  When complete, please
+follow the procedure given in the
+<em data-coord="prj4.umt:688:214"><a href="../../misc/git-setup/git-setup.html#prj-submit" data-coord="prj4.umt:688:214">git setup</a></em> document
+to merge your <samp data-coord="prj4.umt:688:249">prj1-sol</samp> branch into your <samp data-coord="prj4.umt:688:277">master</samp> branch and submit
+your project to the grader via github.
+</p></section></section>
+    </div> <!-- #content -->
+    <script src="../../assets/scripts/loginAction.js"></script>
+  </body>
+</html>
